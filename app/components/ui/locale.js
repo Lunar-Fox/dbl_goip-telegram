@@ -25,6 +25,7 @@ exports.getLocale = function (locale) {
                 nouserinrecipients: 'Этого пользователя нет в получателях SIM-карты #',
                 incorrectvalue: 'Неверное значение',
                 restricted: 'Недостаточно прав',
+                recipientsnotfound: 'Получатели на найдены',
             }
         break;
         case 'en':
@@ -51,6 +52,7 @@ exports.getLocale = function (locale) {
                 nouserinrecipients: 'This user is not in the recipients of the SIM card #',
                 incorrectvalue: 'Incorrect value',
                 restricted: 'Action is restricted',
+                recipientsnotfound: 'Recipients not found',
             }
         break;
     }

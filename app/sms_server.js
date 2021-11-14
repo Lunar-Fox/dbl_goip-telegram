@@ -257,6 +257,8 @@ bot.command('recipients', async (ctx) => {
 
         let recipients = await functions.getRecipients(redis, args[1]);
 
+        if(recipients?.length == 0) { ctx.reply(locale.recipientsnotfound); return; }
+
         if(recipients?.length > 50) {
             functions.sendInParts(recipients, ctx);
         } else {
