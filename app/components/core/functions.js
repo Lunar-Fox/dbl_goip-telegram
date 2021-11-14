@@ -16,13 +16,21 @@ exports.checkValue = function(value) {
     return !isNaN(value) && Number.isInteger(Number(value));
 }
 
+exports.sendInParts = async function(array, botcontext) {
+    let i,j, temporary, chunk = 50;
+    for (i = 0,j = array.length; i < j; i += chunk) {
+        temporary = array.slice(i, i + chunk);
+        botcontext.reply(temporary.join('\n'));
+    }
+}
+
 exports.changeRecipient = async function(redisconnection, locale, uid, simnum, botcontext, add) {
     if(!self.checkValue(uid) || !self.checkValue(simnum)) { botcontext.reply(locale.incorrectvalue); return; }
-
+    let userinfo = await redisconnection.hget('users', uid, (val) => { return val; });
     if(!await self.isRegistered(redisconnection, uid)) { botcontext.reply(locale.usernotfound); return; }
 
     if(add) {   
-        if(await redisconnection.hsetnx('sim'+simnum, uid, 1)) {
+        if(await redisconnection.hsetnx('sim'+simnum, uid, userinfo)) {
             botcontext.reply(`${locale.addedsimforuser} ${simnum}`);
         } else {
             botcontext.reply(`${locale.simalreadyexists} ${simnum}`);
@@ -35,4 +43,8 @@ exports.changeRecipient = async function(redisconnection, locale, uid, simnum, b
             botcontext.reply(`${locale.nouserinrecipients} ${simnum}`);
         }
     }
+}
+
+exports.getRecipients = async function(redisconnection, sim_number) {
+    return await redisconnection.hvals(`sim${sim_number}`, (val) => { return val; });
 }

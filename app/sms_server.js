@@ -229,11 +229,7 @@ bot.command('getusers', async (ctx) => {
     if(await functions.auth(redis, ctx.update.message.from.id)) {
         let users = await redis.hvals('users', (val) => { return val; });
         if(users?.length > 50) {
-            let i,j, temporary, chunk = 50;
-            for (i = 0,j = users.length; i < j; i += chunk) {
-                temporary = users.slice(i, i + chunk);
-                ctx.reply(temporary.join('\n'));
-            }
+            functions.sendInParts(users, ctx);
         } else {
             ctx.reply(users.join('\n'));
         }
@@ -251,6 +247,22 @@ bot.command('delrecipient', async (ctx) => {
     if(await functions.auth(redis, ctx.update.message.from.id)) {
         let args = ctx.update.message.text.split(' ');
         functions.changeRecipient(redis, locale, args[1], args[2], ctx, false)
+    }
+});
+
+bot.command('recipients', async (ctx) => {
+    if(await functions.auth(redis, ctx.update.message.from.id)) {
+        let args = ctx.update.message.text.split(' ');
+        if(!args[1]) { ctx.reply(locale.novalue); return; }
+
+        let recipients = await functions.getRecipients(redis, args[1]);
+
+        if(recipients?.length > 50) {
+            functions.sendInParts(recipients, ctx);
+        } else {
+            ctx.reply(recipients.join('\n'));
+        }
+
     }
 });
 

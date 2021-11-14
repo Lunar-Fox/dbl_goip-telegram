@@ -54,6 +54,7 @@ Service for receive and transmit SMS from DBL-GoIP to Telegram
 * /simconfig <sim_number> name <text> - Set Slot name - Example: /simconfig 1 name FirstSim
 * /addrecipient <telegram_id> <sim_number> - Add user as recipient - Example: /addrecipient 1234567890 1 
 * /delrecipient <telegram_id> <sim_number> - Remove user from recipient list - Example: /addrecipient 1234567890 1
+* /recipients <sim_number> - Get list of recipients for this channel - Example: /recipients 1
 * /simsim - Show GoIP SIM-cards status
 
 - You can use test_message.js for testing message transmitting

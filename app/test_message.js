@@ -3,9 +3,7 @@ const udp = require('dgram');
 
 const client = udp.createSocket('udp4');
 
-let data = [Buffer.from(`RECEIVE:1111111111;id:goip1;password:${process.env.password};srcnum:1111111111;msg:Test message received ${Math.random()}`)];
-let goip_port = 44444;
-let goip_password = 44444;
+let data = [Buffer.from(`RECEIVE:1111111111;id:goip1;password:${process.env.goip_password};srcnum:1111111111;msg:Test message received ${Math.random()}`)];
 
 for(let i = 0; i < data.length;i++) {
     client.send(data[i].toString(), process.env.goip_port ?? 44444, '127.0.0.1', function(error) {
