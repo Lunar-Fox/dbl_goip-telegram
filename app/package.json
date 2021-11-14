@@ -1,0 +1,26 @@
+{
+  "name": "dbl_goip-telegram",
+  "version": "1.0.0",
+  "description": "Service for receive sms from DBL Goip server on telegram",
+  "main": "sms_server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lunar-Fox/dbl_goip-telegram.git"
+  },
+  "keywords": [
+    "goip",
+    "sms"
+  ],
+  "author": "Laplace <lunarfox1907@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Lunar-Fox/dbl_goip-telegram/issues"
+  },
+  "homepage": "https://github.com/Lunar-Fox/dbl_goip-telegram#readme",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "ioredis": "^4.27.6",
+    "sha1": "^1.1.1",
+    "telegraf": "^4.4.0"
+  }
+}
