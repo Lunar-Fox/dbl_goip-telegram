@@ -66,6 +66,9 @@ server.on('message', async function (msg, info) {
             break;
             case 'RECEIVE':
                 msginfo.type = 'sms';
+                msginfo.RECEIVE = item[1];
+                var ack = new Buffer.from('RECEIVE ' + msginfo.RECEIVE + ' OK');
+                server.send(ack, 0, ack.length, info.port, info.address, function(err, bytes) {});
                 msginfo.receivets = item[1];
             break;
             case 'srcnum':
