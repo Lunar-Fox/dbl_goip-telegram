@@ -112,7 +112,7 @@ server.on('message', async function (msg, info) {
         } else {
             let hash = sha1(request_result);
             
-            if(!await redis.exists(hash)) {
+            if(!await redis.exists(hash) && msginfo?.message) {
                 messageTransmit(msginfo);
             }
 
