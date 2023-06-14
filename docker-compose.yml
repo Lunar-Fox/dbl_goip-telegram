@@ -9,7 +9,7 @@ services:
     command: redis-server --include /usr/local/etc/redis/redis.conf
     volumes:
       - ./redis.conf:/usr/local/etc/redis/redis.conf
-      - ./redis_data:/data
+      - ./data/redis_data:/data
   app:
     container_name: goip_bot
     build: app/
