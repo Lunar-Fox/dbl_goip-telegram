@@ -26,6 +26,16 @@ exports.getLocale = function (locale) {
                 incorrectvalue: 'Неверное значение',
                 restricted: 'Недостаточно прав',
                 recipientsnotfound: 'Получатели на найдены',
+                sendphonenums: 'Пришлите номера телефонов получателей (Один на строку) (Максимум 20)',
+                selectednumbers: 'Выбранные номера',
+                writeyourmessage: 'Напишите ваше сообщение',
+                morethantwenty: 'Количество номеров должно быть меньше или равно 20',
+                sendingfailed: 'Не удалось отправить',
+                querysended: 'Запрос отправлен',
+                selectchannel: 'Пришлите номер канал для отправки',
+                nochannelpermission: 'Нет доступа к отправке с выбранного канала',
+                allowedsms: 'Отправка разрешена для пользователя',
+                disallowedsms: 'Отправка отключена для пользователя',
             }
         break;
         case 'en':
@@ -53,6 +63,17 @@ exports.getLocale = function (locale) {
                 incorrectvalue: 'Incorrect value',
                 restricted: 'Action is restricted',
                 recipientsnotfound: 'Recipients not found',
+                sendphonenums: 'Send recipients phone numbers (one on row) (max 20)',
+                selectednumbers: 'Number for send:',
+                writeyourmessage: 'Write your message',
+                morethantwenty: 'Count of numbers must be less or equal 20',
+                sendingfailed: 'Sending failed',
+                querysended: 'Query sended',
+                incorrectchannelvalue: 'Incorrect channel value, must be number',
+                selectchannel: 'Send number of channel for sending',
+                nochannelpermission: 'No access for sending from this channel',
+                allowedsms: 'Sending enabled for user',
+                disallowedsms: 'Sending disabled for user',
             }
         break;
     }

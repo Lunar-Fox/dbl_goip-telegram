@@ -1,6 +1,7 @@
 const udp = require('dgram');
 const { Telegraf } = require('telegraf');
 const sha1 = require('sha1');
+const axios = require('axios');
 require('dotenv').config();
 const bot = new Telegraf(process.env.bottoken);
 // db connections /////////////////////////////
@@ -151,6 +152,80 @@ bot.command('myid', (ctx) => {
     ctx.reply(ctx.update.message.from.id);
 })
 
+bot.command('allowsms', async (ctx) => {
+    if(!functions.rootAuth(ctx.update.message.from?.username)) { console.log(ctx.update.message.text); return; }
+    let args = ctx.update.message.text.split(' ');
+
+    if(!args[1] || !args[2]) {
+        ctx.reply(locale.novalue);
+        return;
+    }
+
+    let info = await bot.telegram.getChat(args[1]).catch((err) => { return false; });
+    if(!info) {
+        ctx.reply(locale.usernotfound);
+        return;
+    }
+
+    if(Number.isNaN(Number(args[2]))) {
+        ctx.reply(locale.incorrectchannelvalue);
+        return;
+    }
+
+    await redis.hset(`allowsms_${args[1]}`, args[2], 1);
+    ctx.reply(`${locale.allowedsms} ${args[1]}`);
+});
+
+bot.command('disallowsms', async (ctx) => {
+    if(!functions.rootAuth(ctx.update.message.from?.username)) { console.log(ctx.update.message.text); return; }
+    let args = ctx.update.message.text.split(' ');
+
+    if(!args[1] || !args[2]) {
+        ctx.reply(locale.novalue);
+        return;
+    }
+
+    let info = await bot.telegram.getChat(args[1]).catch((err) => { return false; });
+    if(!info) {
+        ctx.reply(locale.usernotfound);
+        return;
+    }
+
+    if(Number.isNaN(Number(args[2]))) {
+        ctx.reply(locale.incorrectchannelvalue);
+        return;
+    }
+
+    await redis.hdel(`allowsms_${args[1]}`, args[2]);
+    ctx.reply(`${locale.disallowedsms} ${args[1]}`);
+});
+
+
+
+bot.command('writemessage', async (ctx) => {
+    let args = ctx.update.message.text.split(' ');
+    if(!args[1]) {
+        ctx.reply(locale.novalue);
+        return;
+    }
+
+    let allow = await redis.hexists(`allowsms_${ctx.update.message.from.id}`, args[1]);
+    if(Number.isNaN(Number(args[1]))) {
+        ctx.reply(locale.incorrectchannelvalue);
+        return;
+    }
+
+    if(!allow) {
+        ctx.reply(locale.nochannelpermission)
+        return;
+    }
+
+    await redis.hset(`session_${ctx.update.message.from.id}`, 'channel', Number(args[1]));
+    await redis.hset('actions', ctx.update.message.from.id, 'sendnumbers');
+
+    ctx.reply(locale.sendphonenums);
+})
+
 bot.command('addadmin', async (ctx) => {
     if(!functions.rootAuth(ctx.update.message.from?.username)) { console.log(ctx.update.message.text); return; }
 
@@ -282,6 +357,43 @@ bot.start(async (ctx) => {
     }
 
     ctx.reply(`👋🏻 ${locale.hello} ${ctx.message.from.username ?? ctx.message.chat.first_name}!`);
+});
+
+bot.on('text', async (ctx) => {
+    let action = await redis.hget('actions', ctx.update.message.from.id);
+
+    if(!action) {
+        return;
+    }
+
+    switch(action) {
+        case 'sendnumbers':
+            let numbersArr = ctx.update.message?.text?.replace(' ', '')?.split('\n');
+            if(numbersArr.length > 20) {
+                ctx.reply(locale.morethantwenty);
+                return;
+            }
+            await redis.hset(`session_${ctx.update.message.from.id}`, 'numbers', JSON.stringify(numbersArr));
+            await redis.hset('actions', ctx.update.message.from.id, 'sendmessage');
+            ctx.reply(`${locale.selectednumbers}\n${numbersArr.join(' \n')}\n\n${locale.writeyourmessage}`)
+        break;
+        case 'sendmessage':
+            let numbers = JSON.parse(await redis.hget(`session_${ctx.update.message.from.id}`, 'numbers'));
+            let channel = await redis.hget(`session_${ctx.update.message.from.id}`, 'channel');
+            await ctx.reply(locale.querysended);
+            for(let i = 0; i < numbers?.length; i++) {
+                await new Promise(data => { setTimeout(() => { data(true) }, 500) });
+                let send = await axios.get(`http://${process.env.goip_host}/default/en_US/send.html?u=${process.env.goip_user}&p=${process.env.goip_password}&l=${channel}&n=${numbers[i]}&m=${encodeURI(ctx.update.message.text)}`).catch(e => { return { status: 'failed', err: e?.message ?? 'unknown error'} })
+                if(send?.status === 'failed' || send.status >= 400) {
+                    if(process.env?.debug) {
+                        console.log(`${locale.sendingfailed}\n${numbers[i]}err`);
+                    }
+                    await ctx.reply(`${locale.sendingfailed}\n${numbers[i]}`);
+                }
+            }
+            await redis.hdel(`actions`, ctx.update.message.from.id);
+        break;
+    }
 });
 
 bot.catch((err, ctx) => {
