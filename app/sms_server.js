@@ -202,7 +202,7 @@ bot.command('disallowsms', async (ctx) => {
 
 
 
-bot.command('writemessage', async (ctx) => {
+bot.command('wsms', async (ctx) => {
     let args = ctx.update.message.text.split(' ');
     if(!args[1]) {
         ctx.reply(locale.novalue);
