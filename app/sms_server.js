@@ -386,7 +386,7 @@ bot.on('text', async (ctx) => {
                 let send = await axios.get(`http://${process.env.goip_host}/default/en_US/send.html?u=${process.env.goip_user}&p=${process.env.goip_password}&l=${channel}&n=${numbers[i]}&m=${encodeURI(ctx.update.message.text)}`).catch(e => { return { status: 'failed', err: e?.message ?? 'unknown error'} })
                 if(send?.status === 'failed' || send.status >= 400) {
                     if(process.env?.debug) {
-                        console.log(`${locale.sendingfailed}\n${numbers[i]}err`);
+                        console.log(`${locale.sendingfailed}\n${numbers[i]}err${send.err}`);
                     }
                     await ctx.reply(`${locale.sendingfailed}\n${numbers[i]}`);
                 }
