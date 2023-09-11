@@ -21,6 +21,8 @@ Service for receive and transmit SMS from DBL-GoIP to Telegram
 * rd_database - Redis database id, default: 0
 * rd_prefix - Redis key prefix
 
+* goip_host - IPv4 address, required for sending sms from telegram
+* goip_user - GoIP Username
 * goip_password - GoIP Password
 * goip_port - GoIP Port, default: 44444 (UDP)
 * persist_msg - Message Persistence, messages TTL is 24 hours if not enabled, any value for enable
@@ -56,5 +58,8 @@ Service for receive and transmit SMS from DBL-GoIP to Telegram
 * /delrecipient <telegram_id> <sim_number> - Remove user from recipient list - Example: /addrecipient 1234567890 1
 * /recipients <sim_number> - Get list of recipients for this channel - Example: /recipients 1
 * /simsim - Show GoIP SIM-cards status
+* /allowsms <telegram_id> <channel_id> - Allow user send sms from this channel
+* /disallowsms <telegram_id> <channel_id> - Disallow user send sms from this channel
+* /wsms <channel_id> - Send message from telegram to phone number
 
 - You can use test_message.js for testing message transmitting
